@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Propina</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=JetBrains+Mono:wght@600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;1,8..60,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --field: #0A1F2E;
+      --paper: #F1E8D2;
+      --turquoise: #1FB5B7;
+      --sienna: #E85A1F;
+      --ink: #17262E;
+      --paper-warm: #E8E0CC;
+      --muted: #647178;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Source Serif 4", Georgia, serif;
+      font-weight: 400;
+      color: var(--ink);
+      background-color: var(--field);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 32px 16px 48px;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(31, 181, 183, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(31, 181, 183, 0.035) 1px, transparent 1px);
+      background-size: 48px 48px;
+      z-index: 0;
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 480px;
+    }
+
+    h1 {
+      margin: 0 0 20px;
+      font-family: Cinzel, serif;
+      font-weight: 700;
+      font-size: clamp(2.25rem, 7vw, 2.85rem);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-align: center;
+      color: var(--paper-warm);
+    }
+
+    .card {
+      background: var(--paper);
+      color: var(--ink);
+      border-radius: 4px;
+      padding: 28px 24px 24px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+    }
+
+    .label {
+      display: block;
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-weight: 600;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .field {
+      margin-bottom: 20px;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      appearance: textfield;
+      -moz-appearance: textfield;
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-weight: 600;
+      font-size: 1.05rem;
+      color: var(--ink);
+      background: #fffdf7;
+      border: 1px solid rgba(23, 38, 46, 0.16);
+      border-radius: 3px;
+      padding: 12px 12px;
+      outline: none;
+    }
+
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    input[type="number"]:focus {
+      border-color: var(--turquoise);
+      box-shadow: 0 0 0 3px rgba(31, 181, 183, 0.35);
+    }
+
+    #custom-tip.custom-active {
+      border-color: var(--sienna);
+      box-shadow: 0 0 0 3px rgba(232, 90, 31, 0.28);
+    }
+
+    .toggle {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    button {
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: 1px solid transparent;
+      border-radius: 3px;
+      padding: 12px 10px;
+      background: rgba(23, 38, 46, 0.08);
+      color: var(--ink);
+    }
+
+    button:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(31, 181, 183, 0.45);
+    }
+
+    .toggle button[aria-pressed="true"] {
+      background: var(--turquoise);
+      color: var(--field);
+    }
+
+    .tips {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .tips button[aria-pressed="true"] {
+      background: var(--turquoise);
+      color: var(--field);
+    }
+
+    .tips button.custom-active[aria-pressed="true"] {
+      background: var(--sienna);
+      color: #fff;
+    }
+
+    .hint {
+      margin: 6px 0 0;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .results {
+      display: grid;
+      gap: 14px;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(23, 38, 46, 0.12);
+    }
+
+    .result {
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.28);
+      border-radius: 3px;
+    }
+
+    .result.highlight {
+      background: rgba(232, 90, 31, 0.12);
+      box-shadow: inset 3px 0 0 var(--sienna);
+    }
+
+    .amount {
+      margin: 0;
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-weight: 600;
+      font-size: 1.2rem;
+      letter-spacing: 0.02em;
+    }
+
+    .converted {
+      margin: 4px 0 0;
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-weight: 600;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    footer {
+      margin: 18px 0 0;
+      text-align: center;
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-weight: 600;
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      color: var(--paper-warm);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Propina</h1>
+    <main class="card">
+      <div class="field">
+        <span class="label" id="currency-label">Bill currency</span>
+        <div class="toggle" role="group" aria-labelledby="currency-label">
+          <button type="button" id="btn-usd" aria-pressed="true">USD</button>
+          <button type="button" id="btn-mxn" aria-pressed="false">MXN</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label" for="rate">Manual rate (MXN per 1 USD)</label>
+        <input id="rate" type="number" inputmode="decimal" min="0" step="0.01" value="18.00">
+        <p class="hint">Typed by you. No live exchange feed.</p>
+      </div>
+
+      <div class="field">
+        <label class="label" for="bill">Bill amount</label>
+        <input id="bill" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0.00">
+      </div>
+
+      <div class="field">
+        <span class="label" id="tip-label">Tip percent</span>
+        <div class="tips" role="group" aria-labelledby="tip-label">
+          <button type="button" class="tip-btn" data-tip="10" aria-pressed="false">10%</button>
+          <button type="button" class="tip-btn" data-tip="15" aria-pressed="true">15%</button>
+          <button type="button" class="tip-btn" data-tip="20" aria-pressed="false">20%</button>
+        </div>
+        <label class="label" for="custom-tip">Custom</label>
+        <input id="custom-tip" type="number" inputmode="decimal" min="0" step="0.01" placeholder="%">
+      </div>
+
+      <div class="field">
+        <label class="label" for="people">Number of people</label>
+        <input id="people" type="number" inputmode="numeric" min="1" step="1" value="1">
+      </div>
+
+      <div class="results">
+        <div class="result">
+          <span class="label">Tip amount</span>
+          <p class="amount" id="tip-primary"></p>
+          <p class="converted" id="tip-converted"></p>
+        </div>
+        <div class="result">
+          <span class="label">Total</span>
+          <p class="amount" id="total-primary"></p>
+          <p class="converted" id="total-converted"></p>
+        </div>
+        <div class="result highlight">
+          <span class="label">Per person</span>
+          <p class="amount" id="person-primary"></p>
+          <p class="converted" id="person-converted"></p>
+        </div>
+      </div>
+    </main>
+    <footer>Clew Labs. AI Assisted. Human Approved.</footer>
+  </div>
+  <script>
+    (function () {
+      var billEl = document.getElementById("bill");
+      var rateEl = document.getElementById("rate");
+      var peopleEl = document.getElementById("people");
+      var customTipEl = document.getElementById("custom-tip");
+      var btnUsd = document.getElementById("btn-usd");
+      var btnMxn = document.getElementById("btn-mxn");
+      var tipButtons = document.querySelectorAll(".tip-btn");
+
+      var money = new Intl.NumberFormat("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+
+      var currency = "USD";
+      var presetTip = 15;
+
+      function formatMoney(amount, code) {
+        if (!Number.isFinite(amount)) {
+          amount = 0;
+        }
+        var prefix = code === "USD" ? "$" : "MXN ";
+        return prefix + money.format(amount);
+      }
+
+      function parseNonNegative(raw) {
+        if (raw === "" || raw == null) {
+          return null;
+        }
+        var n = Number(raw);
+        if (!Number.isFinite(n) || n < 0) {
+          return null;
+        }
+        return n;
+      }
+
+      function zeros() {
+        renderPair("tip", 0, 0);
+        renderPair("total", 0, 0);
+        renderPair("person", 0, 0);
+      }
+
+      function renderPair(key, primaryAmount, convertedAmount) {
+        var other = currency === "USD" ? "MXN" : "USD";
+        document.getElementById(key + "-primary").textContent = formatMoney(primaryAmount, currency);
+        document.getElementById(key + "-converted").textContent = formatMoney(convertedAmount, other);
+      }
+
+      function convert(amount) {
+        var rate = Number(rateEl.value);
+        if (currency === "USD") {
+          return amount * rate;
+        }
+        return amount / rate;
+      }
+
+      function syncTipButtons() {
+        var customRaw = customTipEl.value.trim();
+        var usingCustom = customRaw !== "";
+        tipButtons.forEach(function (btn) {
+          var isPreset = Number(btn.getAttribute("data-tip")) === presetTip && !usingCustom;
+          btn.setAttribute("aria-pressed", isPreset ? "true" : "false");
+          btn.classList.toggle("custom-active", false);
+        });
+        if (usingCustom) {
+          customTipEl.classList.add("custom-active");
+        } else {
+          customTipEl.classList.remove("custom-active");
+        }
+      }
+
+      function calculate() {
+        var bill = parseNonNegative(billEl.value);
+        var rate = Number(rateEl.value);
+        var people = Number(peopleEl.value);
+        var tipPercent;
+
+        var customRaw = customTipEl.value.trim();
+        if (customRaw !== "") {
+          tipPercent = parseNonNegative(customRaw);
+        } else {
+          tipPercent = presetTip;
+        }
+
+        var valid =
+          bill !== null &&
+          Number.isFinite(rate) &&
+          rate > 0 &&
+          Number.isFinite(people) &&
+          people >= 1 &&
+          tipPercent !== null &&
+          Number.isFinite(tipPercent);
+
+        if (!valid) {
+          zeros();
+          return;
+        }
+
+        var tip = bill * (tipPercent / 100);
+        var total = bill + tip;
+        var perPerson = total / people;
+
+        renderPair("tip", tip, convert(tip));
+        renderPair("total", total, convert(total));
+        renderPair("person", perPerson, convert(perPerson));
+      }
+
+      function setCurrency(next) {
+        currency = next;
+        btnUsd.setAttribute("aria-pressed", next === "USD" ? "true" : "false");
+        btnMxn.setAttribute("aria-pressed", next === "MXN" ? "true" : "false");
+        calculate();
+      }
+
+      btnUsd.addEventListener("click", function () {
+        setCurrency("USD");
+      });
+      btnMxn.addEventListener("click", function () {
+        setCurrency("MXN");
+      });
+
+      tipButtons.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          presetTip = Number(btn.getAttribute("data-tip"));
+          customTipEl.value = "";
+          syncTipButtons();
+          calculate();
+        });
+      });
+
+      [billEl, rateEl, peopleEl, customTipEl].forEach(function (el) {
+        el.addEventListener("input", function () {
+          if (el === customTipEl) {
+            syncTipButtons();
+          }
+          calculate();
+        });
+      });
+
+      syncTipButtons();
+      zeros();
+      calculate();
+    })();
+  </script>
+</body>
+</html>
