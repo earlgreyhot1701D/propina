@@ -255,7 +255,7 @@
         <input id="people" type="number" inputmode="numeric" min="1" step="1" value="1">
       </div>
 
-      <div class="results">
+      <div class="results" aria-live="polite">
         <div class="result">
           <span class="label">Tip amount</span>
           <p class="amount" id="tip-primary"></p>
@@ -364,7 +364,7 @@
           bill !== null &&
           Number.isFinite(rate) &&
           rate > 0 &&
-          Number.isFinite(people) &&
+          Number.isInteger(people) &&
           people >= 1 &&
           tipPercent !== null &&
           Number.isFinite(tipPercent);
