@@ -6,6 +6,6 @@ Propina is a single-page tip calculator: enter a bill, choose a tip percent, and
 
 Live: https://earlgreyhot1701d.github.io/propina/
 
-Built with Cursor for the Build a Mini App challenge (Hacktoberfest / MLH Global Hack Week 2026). One prompt, one shot, seven minutes from prompt to live site.
+Built with Cursor for the Build a Mini App challenge (Hacktoberfest / MLH Global Hack Week 2026). One prompt, one shot, eight minutes from first prompt to live site.
 
 Clew Labs. AI Assisted. Human Approved.
